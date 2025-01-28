@@ -6,11 +6,13 @@ import com.company.books.backend.response.CategoriaResponseRest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoriaServiceImpl implements ICategoriaService {
@@ -36,5 +38,52 @@ public class CategoriaServiceImpl implements ICategoriaService {
             return ResponseEntity.internalServerError().body(response);
         }
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<CategoriaResponseRest> buscarCategoriaPorId(Long categoriaId) {
+        log.info("Buscando categoria por id: {}", categoriaId);
+        CategoriaResponseRest response = new CategoriaResponseRest();
+        try {
+            Optional<Categoria> categoriaOptional = categoriaDao.findById(categoriaId);
+            if (categoriaOptional.isPresent()) {
+                Categoria categoria = categoriaOptional.get();
+                response.getCategoriaResponse().setCategorias(List.of(categoria));
+                response.setMetadata("Respuesta Ok", "00", "Respuesta Exitosa");
+            } else {
+                log.info("Categoria no encontrada");
+                response.setMetadata("Respuesta Nok", "-1", "Categoria no encontrada");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (Exception e) {
+            log.error("Error al buscar categoria", e);
+            response.setMetadata("Respuesta Nok", "-1", "Error al consultar la categoria");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<CategoriaResponseRest> crear(Categoria categoria) {
+        log.info("Creando categoria: {}", categoria);
+        CategoriaResponseRest response = new CategoriaResponseRest();
+        try {
+            Categoria categoriaDB = categoriaDao.save(categoria);
+            if (categoriaDB != null) {
+                response.getCategoriaResponse().setCategorias(List.of(categoriaDB));
+            } else {
+                log.info("Error al crear categoria");
+                response.setMetadata("Respuesta Nok", "-1", "Error al crear categoria");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (Exception e) {
+            log.error("Error al buscar categoria", e);
+            response.setMetadata("Respuesta Nok", "-1", "Error al crear la categoria");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        response.setMetadata("Respuesta Ok", "00", "Respuesta Exitosa");
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
