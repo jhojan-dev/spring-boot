@@ -28,6 +28,13 @@ public class CategoriaRestController {
         return categoriaService.crear(request);
     }
 
+    @PutMapping("/categorias/{id}")
+    public ResponseEntity<CategoriaResponseRest> actualizar(@RequestBody Categoria request, @PathVariable Long id) {
+        return categoriaService.actualizar(request, id);
+    }
 
-
+    @DeleteMapping("/categorias/{id}")
+    public ResponseEntity<CategoriaResponseRest> eliminar(@PathVariable Long id) {
+        return categoriaService.eliminar(id);
+    }
 }

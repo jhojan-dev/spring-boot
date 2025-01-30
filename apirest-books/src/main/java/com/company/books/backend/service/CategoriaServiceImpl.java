@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,5 +86,66 @@ public class CategoriaServiceImpl implements ICategoriaService {
         }
         response.setMetadata("Respuesta Ok", "00", "Respuesta Exitosa");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<CategoriaResponseRest> actualizar(Categoria categoria, Long categoriaId) {
+        log.info("Actualizando categoria: {}", categoria);
+        CategoriaResponseRest response = new CategoriaResponseRest();
+        List<Categoria> list = new ArrayList<>();
+        try {
+            Optional<Categoria> categoriaDbOptional = categoriaDao.findById(categoriaId);
+            if (categoriaDbOptional.isPresent()) {
+                Categoria categoriaDB = categoriaDbOptional.get();
+                categoriaDB.setNombre(categoria.getNombre());
+                categoriaDB.setDescripcion(categoria.getDescripcion());
+
+                categoriaDB = categoriaDao.save(categoriaDB);
+                if (categoriaDB != null) {
+                    list.add(categoriaDB);
+                    response.getCategoriaResponse().setCategorias(list);
+                } else {
+                    log.info("Error al actualizar categoria");
+                    response.setMetadata("Respuesta Nok", "-1", "Error al actualizar categoria");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            } else {
+                log.info("Categoria no encontrada");
+                response.setMetadata("Respuesta Nok", "-1", "Categoria no encontrada");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (Exception e) {
+            log.error("Error al actualizar categoria", e);
+            response.setMetadata("Respuesta Nok", "-1", "Error al actualizar categoria");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        response.setMetadata("Respuesta Ok", "00", "Respuesta Exitosa");
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<CategoriaResponseRest> eliminar(Long id) {
+        log.info("Eliminando categoria: {}", id);
+        CategoriaResponseRest response = new CategoriaResponseRest();
+
+        try {
+            Optional<Categoria> categoriaOptional = categoriaDao.findById(id);
+            if (categoriaOptional.isPresent()) {
+                categoriaDao.deleteById(id);
+                response.setMetadata("Respuesta Ok", "00", "Categoria Eliminada");
+            } else {
+                log.info("Categoria no encontrada");
+                response.setMetadata("Respuesta Nok", "-1", "Categoria no encontrada");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+        } catch (Exception e) {
+            log.error("Error al eliminar categoria", e);
+            e.getStackTrace();
+            response.setMetadata("Respuesta Nok", "-1", "Error al eliminar categoria");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+        return ResponseEntity.ok(response);
     }
 }
