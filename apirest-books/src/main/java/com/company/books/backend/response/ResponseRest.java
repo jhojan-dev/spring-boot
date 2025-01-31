@@ -1,12 +1,15 @@
 package com.company.books.backend.response;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ResponseRest {
-    private List<Map<String, String>> metadata = new ArrayList<Map<String, String>>();
+public class ResponseRest implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private List<Map<String, String>> metadata = new ArrayList<>();
 
     public List<Map<String, String>> getMetadata() {
         return this.metadata;
