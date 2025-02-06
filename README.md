@@ -1,11 +1,11 @@
-# Curso de Spring Boot 
+# Spring Boot 
 
-Este repositorio contiene los proyectos desarrollados durante el curso.
+Este repositorio contiene proyectos desarrollados con Spring Boot.
 
 ## Requisitos  
-- Java 8 o superior  
+- Java 17 o superior  
 - Maven 
-- Spring Boot 2.x o superior  
+- Spring Boot 3.x o superior  
 - Base de datos (H2, MySQL)  
 
 ## Configuración  
