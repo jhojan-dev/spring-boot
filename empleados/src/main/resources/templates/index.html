@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Aplicación con spring boot y mongodb</title>
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>Listado de empleados</h1>
+
+        <hr>
+
+        <h2 class="mb-3" th:if="${list.isEmpty()}">No hay empleados a listar</h2>
+
+        <div th:if="!${list.isEmpty()}" class="my-2">
+            <table class="table">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Edad</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="empleado : ${list}">
+                        <th scope="row" th:text="${empleado.nombre}">
+                        <th th:text="${empleado.apellido}">
+                        <th th:text="${empleado.edad}">
+                        <th th:text="${empleado.direccion}">
+                        <th th:text="${empleado.telefono}">
+                        <td>
+                            <a class="btn btn-primary" th:href="@{/guardar/{id}(id=${empleado.id})}">Editar</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-danger" th:href="@{/eliminar/{id}(id=${empleado.id})}">Eliminar</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        
+        <div>
+            <a href="/guardar/0" class="btn btn-primary">Agregar</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

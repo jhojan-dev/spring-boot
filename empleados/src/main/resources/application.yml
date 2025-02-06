@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: empleados
+  data:
+    mongodb:
+      database: empleado_db
+      uri: ${MONGO_URI}
+      auto-index-creation: true
+      uuid-representation: standard
